@@ -17,11 +17,23 @@ validarParametroNumerico(){
 }
 
 listarUsuariosInactivos(){
-    if [ $# -eq 1 ]; then
-       listar_usuarios_inactivos "$1"
-     fi
+    find /var/mail -type f ! -atime -"$1" -exec basename {} \;
+}
+
+mostrar_usuarios_eliminados(){
+   usuarios_eliminados=$(find /var/mail -type f -exec test -d /home/{} \; -printf "%f\n")
+
+   if [[ $usuarios_eliminados != ""]]
+   then
+      echo "Usuarios eliminados pero con archivos de correo:"
+      echo "$usuarios_eliminados"
+      echo -e "\n"
+   else
+      echo "No hay usuarios eliminados"
+      fi
 }
 
 validarNumParametros $#
 validarParametroNumerico $1
 listarUsuariosInactivos $#
+mostrar_usuarios_inactivos $#
